@@ -1,0 +1,18 @@
+
+# Archivos del IDE
+.idea/
+*.iml
+
+# Git
+.git/
+.gitignore
+
+# Archivos compilados
+target/
+
+# Credenciales
+.env
+.env.*
+
+# Otros archivos locales
+*.log

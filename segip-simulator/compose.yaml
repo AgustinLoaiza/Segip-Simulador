@@ -1,0 +1,61 @@
+
+services:
+
+  # =======================================
+  # BASE DE DATOS POSTGRESQL
+  # =======================================
+
+  postgres:
+    image: postgres:17-alpine
+    container_name: segip-postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    ports:
+      - "127.0.0.1:55432:5432"
+
+    volumes:
+      - segip_pgdata:/var/lib/postgresql/data
+
+    healthcheck:
+      test: "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # =======================================
+  # MICROSERVICIO REST SEGIP
+  # =======================================
+
+  segip-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    image: segip-simulator:1.0.0
+    container_name: segip-api
+    restart: unless-stopped
+
+    ports:
+      - "127.0.0.1:8081:8081"
+
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+      SPRING_PROFILES_ACTIVE: dev
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  segip_pgdata:
