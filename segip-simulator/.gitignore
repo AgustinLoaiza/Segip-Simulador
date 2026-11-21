@@ -32,4 +32,15 @@ build/
 ### VS Code ###
 .vscode/
 
+# Credenciales
 .env
+.env.*
+!.env.example
+
+# IntelliJ IDEA
+.idea/
+.run/
+
+
+# Archivos temporales
+*.log
